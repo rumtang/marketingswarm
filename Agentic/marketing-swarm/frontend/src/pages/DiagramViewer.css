@@ -1,0 +1,122 @@
+.diagram-viewer {
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  color: #e1e1e1;
+  padding: 40px 20px;
+}
+
+.viewer-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.viewer-header h1 {
+  font-size: 2.5rem;
+  color: #bb86fc;
+  margin-bottom: 10px;
+}
+
+.viewer-header p {
+  font-size: 1.2rem;
+  color: #999;
+}
+
+.diagram-controls {
+  max-width: 800px;
+  margin: 0 auto 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.diagram-controls label {
+  font-weight: 500;
+  color: #03dac6;
+}
+
+.diagram-select {
+  flex: 1;
+  padding: 10px 15px;
+  background-color: #1e1e1e;
+  border: 2px solid #333;
+  border-radius: 6px;
+  color: #e1e1e1;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.diagram-select:hover {
+  border-color: #bb86fc;
+}
+
+.diagram-select:focus {
+  outline: none;
+  border-color: #03dac6;
+  box-shadow: 0 0 0 3px rgba(3, 218, 198, 0.1);
+}
+
+.diagram-info {
+  max-width: 800px;
+  margin: 0 auto 20px;
+  text-align: center;
+}
+
+.diagram-info h2 {
+  color: #03dac6;
+  margin-bottom: 10px;
+}
+
+.diagram-info p {
+  color: #999;
+  line-height: 1.6;
+}
+
+.diagram-footer {
+  max-width: 800px;
+  margin: 40px auto 0;
+  text-align: center;
+}
+
+.export-button {
+  background-color: #bb86fc;
+  color: #000;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.export-button:hover {
+  background-color: #9965d6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(187, 134, 252, 0.3);
+}
+
+.hint {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Print styles */
+@media print {
+  .diagram-viewer {
+    background-color: white;
+    color: black;
+  }
+  
+  .diagram-controls,
+  .export-button,
+  .hint {
+    display: none;
+  }
+  
+  .diagram-container {
+    box-shadow: none;
+    background-color: white;
+  }
+}

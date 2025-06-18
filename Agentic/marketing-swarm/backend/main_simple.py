@@ -7,6 +7,7 @@ import os
 import asyncio
 import json
 import time
+import random
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from contextlib import asynccontextmanager
@@ -25,6 +26,8 @@ from utils.config import get_settings, validate_environment
 from safety.budget_guard import BudgetGuard
 from safety.compliance_filter import ComplianceFilter
 from safety.input_sanitizer import InputSanitizer
+from ai.response_generator import ai_generator
+from ai.context_manager import context_manager
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -152,11 +155,66 @@ class SimpleAgentManager:
         # Get conversation history to determine if agent should interrupt or react
         previous_responses = conversation_flow or []
         
-        # Dynamic responses based on agent personality and conversation context
-        dynamic_responses = self.get_dynamic_responses(agent_id, query, previous_responses)
+        # Use AI if enabled, otherwise fall back to predetermined responses
+        use_ai = os.getenv("USE_AI_RESPONSES", "true").lower() == "true"
         
-        return dynamic_responses
+        if use_ai:
+            try:
+                # Check if this should be a reaction or interruption
+                is_reaction = False
+                is_interruption = False
+                target_agent = None
+                
+                if previous_responses:
+                    last_response = previous_responses[-1]
+                    last_agent = last_response.get('agent', '')
+                    last_message = last_response.get('message', '')
+                    
+                    # Determine if this is a reaction based on personality
+                    if agent['contrarianism'] > 0.7 and self._should_react(agent_id, last_message):
+                        is_reaction = True
+                    
+                    # Determine if this is an interruption
+                    if agent['assertiveness'] > 0.8 and random.random() < 0.3:
+                        is_interruption = True
+                        target_agent = last_agent
+                
+                # Generate AI response
+                response = await ai_generator.generate_response(
+                    agent_id=agent_id,
+                    agent_data=agent,
+                    query=query,
+                    conversation_history=previous_responses,
+                    is_reaction=is_reaction,
+                    is_interruption=is_interruption,
+                    target_agent=target_agent
+                )
+                
+                return response
+                
+            except Exception as e:
+                logger.error(f"AI response generation failed: {e}. Falling back to predetermined responses.")
+                # Fall back to predetermined responses
+                return self.get_dynamic_responses(agent_id, query, previous_responses)
+        else:
+            # Use predetermined responses
+            return self.get_dynamic_responses(agent_id, query, previous_responses)
 
+    def _should_react(self, agent_id: str, last_message: str) -> bool:
+        """Determine if agent should react to the last message"""
+        # Check for trigger words based on agent personality
+        reaction_triggers = {
+            'sarah': ['data', 'metrics', 'roi', 'conversion'],
+            'marcus': ['brand', 'emotion', 'feeling', 'trust'],
+            'elena': ['boring', 'traditional', 'safe', 'conventional'],
+            'david': ['profit', 'revenue', 'cost', 'money'],
+            'priya': ['assume', 'guess', 'feel', 'think'],
+            'alex': ['slow', 'careful', 'wait', 'analyze']
+        }
+        
+        triggers = reaction_triggers.get(agent_id, [])
+        return any(trigger in last_message.lower() for trigger in triggers)
+    
     def get_dynamic_responses(self, agent_id: str, query: str, previous_responses: List) -> str:
         """Generate dynamic responses with personality-driven interactions"""
         agent = self.agents[agent_id]
@@ -515,10 +573,45 @@ class SimpleAgentManager:
             }
             self.briefing_document[section].append(entry)
     
-    def get_goal_oriented_response(self, agent_id: str, query: str, conversation_history: List) -> str:
+    async def get_goal_oriented_response(self, agent_id: str, query: str, conversation_history: List) -> str:
         """Generate responses focused on building the briefing document"""
         agent = self.agents[agent_id]
         phase = self.conversation_phase
+        
+        # Use AI if enabled
+        use_ai = os.getenv("USE_AI_RESPONSES", "true").lower() == "true"
+        
+        if use_ai:
+            try:
+                # Build context for AI
+                context = context_manager.build_context(
+                    agent_id=agent_id,
+                    agent_data=agent,
+                    query=query,
+                    conversation_history=conversation_history,
+                    include_relationships=True
+                )
+                
+                # Add phase information to agent data
+                agent_with_phase = agent.copy()
+                agent_with_phase['current_phase'] = phase
+                agent_with_phase['goal'] = f"Contributing to {phase} phase of strategic briefing"
+                
+                # Generate AI response
+                response = await ai_generator.generate_response(
+                    agent_id=agent_id,
+                    agent_data=agent_with_phase,
+                    query=query,
+                    conversation_history=conversation_history,
+                    is_reaction=False,
+                    is_interruption=False
+                )
+                
+                return response
+                
+            except Exception as e:
+                logger.error(f"AI goal-oriented response failed: {e}")
+                # Fall back to predetermined responses
         
         # Analyze what's been discussed to build on it
         contributions = self.analyze_contributions(conversation_history)
@@ -997,7 +1090,7 @@ async def run_agent_conversation(conversation_id: str, user_query: str):
             await asyncio.sleep(thinking_time)
             
             # Get goal-oriented response focused on building the briefing
-            response = agent_manager.get_goal_oriented_response(
+            response = await agent_manager.get_goal_oriented_response(
                 current_agent, user_query, conversation_history
             )
             
@@ -1036,7 +1129,7 @@ async def run_agent_conversation(conversation_id: str, user_query: str):
             thinking_time = agent['patience'] * 2 + random.uniform(0.5, 1.5)
             await asyncio.sleep(thinking_time)
             
-            response = agent_manager.get_goal_oriented_response(
+            response = await agent_manager.get_goal_oriented_response(
                 agent_id, user_query, conversation_history
             )
             
