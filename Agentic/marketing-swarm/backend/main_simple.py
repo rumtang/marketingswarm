@@ -4,6 +4,10 @@ FastAPI backend with WebSocket support for multi-agent collaboration
 """
 
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 import asyncio
 import json
 import time
