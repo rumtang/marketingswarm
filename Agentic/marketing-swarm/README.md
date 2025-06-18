@@ -1,6 +1,6 @@
-# Marketing Swarm - AI Multi-Agent Collaboration System
+# Marketing Swarm 🚀
 
-A sophisticated multi-agent AI system demonstrating collaborative marketing intelligence for financial services, built with FastAPI (Python 3.13 compatible) and React.
+A dynamic multi-agent AI collaboration system that simulates a marketing team discussing strategies, campaigns, and business solutions.
 
 ## 🚀 Quick Start
 
@@ -40,13 +40,22 @@ cd frontend && npm start
 - **[Frontend README](frontend/README.md)** - UI component guide
 - **[Troubleshooting](docs/troubleshooting.md)** - Common issues and solutions
 
-## ✨ What This Demo Shows
+## 🤖 The Team
 
-- **6 Specialized AI Agents** collaborating like a real marketing team
-- **Mock agent responses** for cost-effective demonstrations
-- **Natural conversation flow** with realistic timing and interactions
-- **Enterprise-grade safety** with budget controls and compliance filters
-- **Production-ready monitoring** with health checks and fallback systems
+- **Sarah** - Brand Strategy Lead: Visionary idealist who champions brand positioning
+- **Marcus** - Digital Campaign Manager: Data-driven optimizer who demands metrics
+- **Elena** - Content Marketing Specialist: Creative rebel pushing boundaries
+- **David** - Customer Experience Designer: User advocate prioritizing UX
+- **Priya** - Marketing Analytics Manager: Skeptical scientist requiring proof
+- **Alex** - Growth Marketing Lead: Risk-taking experimenter with bold ideas
+
+## ✨ Key Features
+
+- **Dynamic Conversations**: Agents interrupt, debate, and build on each other naturally
+- **Personality-Driven**: Each agent has quantified traits (assertiveness, contrarianism, creativity)
+- **Real-Time Updates**: WebSocket-based live conversation streaming
+- **Professional Output**: Generates executive summaries, action items, and implementation plans
+- **Relationship Tracking**: Agents form alliances and conflicts that evolve over time
 
 ## =� Key Safety Features
 
