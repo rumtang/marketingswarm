@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Swarm - Minimal Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .status-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .agents {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .agent-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .conversation {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 400px;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .status-healthy { background: #28a745; }
+        .status-error { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 Marketing Swarm - AI Team Collaboration</h1>
+        <p>6 Specialized AI Agents Working Together</p>
+    </div>
+
+    <div class="status">
+        <div class="status-card">
+            <h3>🔌 Backend API</h3>
+            <p><span class="status-indicator status-healthy"></span> <span id="backend-status">Checking...</span></p>
+        </div>
+        <div class="status-card">
+            <h3>🤖 Agents</h3>
+            <p><span class="status-indicator status-healthy"></span> <span id="agents-status">Checking...</span></p>
+        </div>
+        <div class="status-card">
+            <h3>🚀 Launch Status</h3>
+            <p><span class="status-indicator status-healthy"></span> <span id="launch-status">Checking...</span></p>
+        </div>
+    </div>
+
+    <div class="agents">
+        <div class="agent-card">
+            <h3>👔 Sarah</h3>
+            <p>Brand Strategy Lead</p>
+        </div>
+        <div class="agent-card">
+            <h3>📱 Marcus</h3>
+            <p>Digital Campaigns</p>
+        </div>
+        <div class="agent-card">
+            <h3>✍️ Elena</h3>
+            <p>Content Marketing</p>
+        </div>
+        <div class="agent-card">
+            <h3>🎨 David</h3>
+            <p>Customer Experience</p>
+        </div>
+        <div class="agent-card">
+            <h3>📊 Priya</h3>
+            <p>Marketing Analytics</p>
+        </div>
+        <div class="agent-card">
+            <h3>🚀 Alex</h3>
+            <p>Growth Marketing</p>
+        </div>
+    </div>
+
+    <div class="conversation">
+        <h2>💬 Agent Conversation</h2>
+        <button onclick="startDemo()">Start Demo Conversation</button>
+        <div id="messages"></div>
+    </div>
+
+    <script>
+        // Check system status
+        async function checkStatus() {
+            try {
+                // Check backend
+                const health = await fetch('http://localhost:8000/api/health');
+                if (health.ok) {
+                    document.getElementById('backend-status').textContent = 'Connected';
+                    
+                    // Check agents
+                    const agents = await fetch('http://localhost:8000/api/agents/status');
+                    if (agents.ok) {
+                        const data = await agents.json();
+                        document.getElementById('agents-status').textContent = `${Object.keys(data).length} agents ready`;
+                    }
+                    
+                    // Check launch status
+                    const launch = await fetch('http://localhost:8000/api/launch-status');
+                    if (launch.ok) {
+                        const data = await launch.json();
+                        document.getElementById('launch-status').textContent = `${data.percentage}% Complete`;
+                    }
+                }
+            } catch (e) {
+                document.getElementById('backend-status').textContent = 'Not connected';
+            }
+        }
+
+        // Start demo conversation
+        function startDemo() {
+            const messages = document.getElementById('messages');
+            messages.innerHTML = '<div class="message"><strong>User:</strong> How should we launch our new robo-advisor?</div>';
+            
+            // Simulate agent responses
+            const responses = [
+                { agent: 'Sarah', delay: 2000, message: 'From a brand strategy perspective, we need to position ourselves as the trustworthy, accessible alternative to traditional advisors.' },
+                { agent: 'Marcus', delay: 4000, message: 'I recommend starting with LinkedIn and Google Ads targeting professionals aged 25-45 with a test budget of $10K.' },
+                { agent: 'Elena', delay: 6000, message: 'We should create educational content series: "Demystifying Robo-Advisors" to build trust and authority.' },
+                { agent: 'David', delay: 8000, message: 'The onboarding experience needs to be simplified to 3 steps with clear progress indicators.' },
+                { agent: 'Priya', delay: 10000, message: 'We should track CAC, activation rate, and 30-day retention as our primary KPIs.' },
+                { agent: 'Alex', delay: 12000, message: 'I suggest implementing a referral program after reaching 1,000 active users for viral growth.' }
+            ];
+            
+            responses.forEach(r => {
+                setTimeout(() => {
+                    messages.innerHTML += `<div class="message"><strong>${r.agent}:</strong> ${r.message}</div>`;
+                    messages.scrollTop = messages.scrollHeight;
+                }, r.delay);
+            });
+        }
+
+        // Check status on load
+        checkStatus();
+        setInterval(checkStatus, 5000);
+    </script>
+</body>
+</html>
